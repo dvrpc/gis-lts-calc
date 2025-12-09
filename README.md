@@ -90,12 +90,12 @@ Contains all original bike network fields plus:
 
 The `bike_fac~1` field should use these codes:
 - `0` - No bike facility
-- `1` - Bike lane
-- `2` - Buffered bike lane
-- `3` - Protected bike lane / cycle track
-- `4` - Shared lane markings (sharrows)
-- `5` - Paved shoulder
-- `6` - Separate path
+- `1` - Sharrows
+- `2` - Bike Lane
+- `3` - Buffered Bike Lane
+- `4` - Multi-use Trail
+- `5` - Signed Bike Route
+- `6` - Protected Bike Lane
 - `9` - Opposite direction of one-way street
 
 ## Notes

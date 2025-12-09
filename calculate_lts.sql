@@ -26,7 +26,7 @@ FROM output.model_network_with_speed;
 
 -- Calculate LTS using the exact lookup table methodology
 DROP TABLE IF EXISTS output.model_network_with_lts CASCADE;
-CREATE TABLE output.model_network_with_lts AS
+CREATE TABLE output.model_network_with_lts as
 WITH lts_calc AS (
   SELECT
     gid,
@@ -85,7 +85,8 @@ WITH lts_calc AS (
     END as col_index,
     geom
   FROM output.model_network_with_parsed_speed
-)
+),
+lts_calc_final as (
 SELECT
   gid,
   no,
@@ -93,7 +94,16 @@ SELECT
   tonodeno,
   typeno,
   length,
-  bike_facility,
+  CASE WHEN bike_facility = 0 THEN 'No facility'
+    WHEN bike_facility = 1 THEN 'Sharrows'
+    WHEN bike_facility = 2 THEN 'Bike Lane'
+    WHEN bike_facility = 3 THEN 'Buffered Bike Lane'
+    WHEN bike_facility = 4 THEN 'Multi-use Trail'
+    WHEN bike_facility = 5 THEN 'Signed Bike Route'
+    WHEN bike_facility = 6 THEN 'Protected Bike Lane'
+    WHEN bike_facility = 9 THEN 'Opposite direction of one way street'
+    ELSE NULL 
+  END as bike_facility,
   slope,
   county_code,
   totnumlanes,
@@ -208,7 +218,12 @@ SELECT
 FROM lts_calc
 WHERE NOT (typeno::int BETWEEN 0 AND 6 
     OR typeno::int BETWEEN 10 AND 19 
-    OR typeno::int BETWEEN 80 AND 99);
+    OR typeno::int BETWEEN 80 AND 99))
+SELECT
+  *
+FROM
+  lts_calc_final
+WHERE lts NOT IN (-1,-2);
 
 -- Create spatial index
 CREATE INDEX model_network_with_lts_geom_idx ON output.model_network_with_lts USING GIST (geom);
